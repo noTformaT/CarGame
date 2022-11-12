@@ -38,6 +38,10 @@ private:
     // The number of degrees rotated per second at full control throw (degrees / seconds)
     UPROPERTY(EditAnywhere)
     float MaxDegreesPerSecond = 90.0f;
+
+    // Higher means more drag
+    UPROPERTY(EditAnywhere)
+    float DragCoefficient = 16.0f;
     
     void MoveForward(float Value);
     void MoveRight(float Value);
@@ -45,6 +49,8 @@ private:
     void UpdateLocationFromVelocity(float DeltaTime);
 
     void ApplyRotation(float DeltaTime);
+
+    FVector GetAirResistance();
 
     float Throttle = 0.0f;
     float SteeringThrow = 0.0f;
