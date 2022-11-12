@@ -30,7 +30,7 @@ struct FGoKartState
     GENERATED_USTRUCT_BODY();
 
     UPROPERTY()
-    FTransform ReplicatedTranform;
+    FTransform Transform;
 
     UPROPERTY()
     FVector Velocity;
@@ -81,17 +81,8 @@ private:
     UPROPERTY(EditAnywhere)
     float RollingResistanceCoefficient = 0.015f;
     
-    UPROPERTY(ReplicatedUsing=OnRep_ReplicatedTransform)
-    FTransform ReplicatedTranform;
-    
-    UFUNCTION()
-    void OnRep_ReplicatedTransform();
-    
     UFUNCTION(Server, Reliable, WithValidation)
-    void Server_MoveForward(float Value);
-
-    UFUNCTION(Server, Reliable, WithValidation)
-    void Server_MoveRight(float Value);
+    void Server_SendMove(FGoKartMove Move);
 
     void MoveForward(float Value);
     void MoveRight(float Value);
@@ -108,7 +99,12 @@ private:
     
     UPROPERTY(Replicated)
     float SteeringThrow = 0.0f;
-    
-    UPROPERTY(Replicated)
+
+    UPROPERTY(ReplicatedUsing=OnRep_ServerState)
+    FGoKartState ServerState;
+
+    UFUNCTION()
+    void OnRep_ServerState();
+
     FVector Velocity;
 };
