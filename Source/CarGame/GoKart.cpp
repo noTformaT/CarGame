@@ -5,6 +5,7 @@
 #include "Components/InputComponent.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AGoKart::AGoKart()
@@ -54,6 +55,17 @@ void AGoKart::Tick(float DeltaTime)
     ApplyRotation(DeltaTime);
     
     UpdateLocationFromVelocity(DeltaTime);
+    
+    if (HasAuthority())
+    {
+        ReplicatedLocation = GetActorLocation();
+        ReplicatedRotation = GetActorRotation();
+    }
+    else
+    {
+        SetActorLocation(ReplicatedLocation);
+        SetActorRotation(ReplicatedRotation);
+    }
 
     UE_LOG(LogTemp, Display, TEXT("Throttle: %f, Force (x: %f, y: %f, z: %f), "), Throttle, Force.X, Force.Y, Force.Z);
     
@@ -133,4 +145,11 @@ void AGoKart::MoveRight(float Value)
 {
     SteeringThrow = Value;
     Server_MoveRight(Value);
+}
+
+void AGoKart::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+    DOREPLIFETIME(AGoKart, ReplicatedLocation);
+    DOREPLIFETIME(AGoKart, ReplicatedRotation);
 }
