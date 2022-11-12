@@ -31,12 +31,23 @@ private:
     UPROPERTY(EditAnywhere)
     float Mass = 1000.0f;
     
+    // The force applied to car when throttle is fully down (N)
     UPROPERTY(EditAnywhere)
     float MaxDrivingForce = 10000.0f;
+
+    // The number of degrees rotated per second at full control throw (degrees / seconds)
+    UPROPERTY(EditAnywhere)
+    float MaxDegreesPerSecond = 90.0f;
     
     void MoveForward(float Value);
+    void MoveRight(float Value);
+
+    void UpdateLocationFromVelocity(float DeltaTime);
+
+    void ApplyRotation(float DeltaTime);
 
     float Throttle = 0.0f;
+    float SteeringThrow = 0.0f;
     
     FVector Velocity;
 };
