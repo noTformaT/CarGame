@@ -154,4 +154,7 @@ void AGoKart::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetime
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
     DOREPLIFETIME(AGoKart, ReplicatedTranform);
+    DOREPLIFETIME(AGoKart, Velocity);
+    DOREPLIFETIME(AGoKart, Throttle);
+    DOREPLIFETIME(AGoKart, SteeringThrow);
 }

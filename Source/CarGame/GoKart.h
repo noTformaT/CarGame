@@ -69,8 +69,12 @@ private:
     FVector GetAirResistance();
     FVector GetRollingResistance();
 
+    UPROPERTY(Replicated)
     float Throttle = 0.0f;
+    
+    UPROPERTY(Replicated)
     float SteeringThrow = 0.0f;
     
+    UPROPERTY(Replicated)
     FVector Velocity;
 };
