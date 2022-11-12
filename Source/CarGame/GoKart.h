@@ -35,9 +35,9 @@ private:
     UPROPERTY(EditAnywhere)
     float MaxDrivingForce = 10000.0f;
 
-    // The number of degrees rotated per second at full control throw (degrees / seconds)
+    // Minimum radius of the car turning circle at full lock (M)
     UPROPERTY(EditAnywhere)
-    float MaxDegreesPerSecond = 90.0f;
+    float MinTurningRadius = 10.0f;
 
     // Higher means more drag
     UPROPERTY(EditAnywhere)
@@ -47,8 +47,11 @@ private:
     UPROPERTY(EditAnywhere)
     float RollingResistanceCoefficient = 0.015f;
     
-    void MoveForward(float Value);
-    void MoveRight(float Value);
+    UFUNCTION(Server, Reliable, WithValidation)
+    void Server_MoveForward(float Value);
+
+    UFUNCTION(Server, Reliable, WithValidation)
+    void Server_MoveRight(float Value);
 
     void UpdateLocationFromVelocity(float DeltaTime);
 
