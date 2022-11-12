@@ -42,6 +42,10 @@ private:
     // Higher means more drag
     UPROPERTY(EditAnywhere)
     float DragCoefficient = 16.0f;
+
+    // Higher means more rolling resistance
+    UPROPERTY(EditAnywhere)
+    float RollingResistanceCoefficient = 0.015f;
     
     void MoveForward(float Value);
     void MoveRight(float Value);
@@ -51,6 +55,7 @@ private:
     void ApplyRotation(float DeltaTime);
 
     FVector GetAirResistance();
+    FVector GetRollingResistance();
 
     float Throttle = 0.0f;
     float SteeringThrow = 0.0f;
