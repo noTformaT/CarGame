@@ -2,6 +2,7 @@
 
 
 #include "GoKartMovementComponent.h"
+#include "GoKart.h"
 
 // Sets default values for this component's properties
 UGoKartMovementComponent::UGoKartMovementComponent()
@@ -30,5 +31,35 @@ void UGoKartMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+
+void UGoKartMovementComponent::SimulateMove(const FGoKartMove& Move)
+{
+	FVector Force = GetOwner()->GetActorForwardVector() * MaxDrivingForce * Move.Throttle;
+
+	Force += GetAirResistance();
+	Force += GetRollingResistance();
+
+	FVector Acceleration = Force / Mass;
+
+	Velocity = Velocity + Acceleration * Move.DeltaTime;
+
+	ApplyRotation(Move.DeltaTime, Move.SteeringThrow);
+
+	UpdateLocationFromVelocity(Move.DeltaTime);
+
+	//UE_LOG(LogTemp, Display, TEXT("Throttle: %f, Force (x: %f, y: %f, z: %f), "), Throttle, Force.X, Force.Y, Force.Z);
+}
+
+FGoKartMove UGoKartMovementComponent::CreateMove(float DeltaTime)
+{
+	FGoKartMove Move;
+	Move.DeltaTime = DeltaTime;
+	Move.SteeringThrow = SteeringThrow;
+	Move.Throttle = Throttle;
+	Move.Time = GetWorld()->TimeSeconds;
+
+	return Move;
 }
 

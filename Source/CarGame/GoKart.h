@@ -62,46 +62,12 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
     
 private:
-    // The mass of the car
-    UPROPERTY(EditAnywhere)
-    float Mass = 1000.0f;
-    
-    // The force applied to car when throttle is fully down (N)
-    UPROPERTY(EditAnywhere)
-    float MaxDrivingForce = 10000.0f;
-
-    // Minimum radius of the car turning circle at full lock (M)
-    UPROPERTY(EditAnywhere)
-    float MinTurningRadius = 10.0f;
-
-    // Higher means more drag
-    UPROPERTY(EditAnywhere)
-    float DragCoefficient = 16.0f;
-
-    // Higher means more rolling resistance
-    UPROPERTY(EditAnywhere)
-    float RollingResistanceCoefficient = 0.015f;
-    
-    UFUNCTION(Server, Reliable, WithValidation)
-    void Server_SendMove(FGoKartMove Move);
 
     void ClearUnacknowledgedMoves(FGoKartMove LastMove);
-    FGoKartMove CreateMove(float DeltaTime);
-    void SimulateMove(const FGoKartMove& Move);
-
-    void MoveForward(float Value);
-    void MoveRight(float Value);
-
-    void UpdateLocationFromVelocity(float DeltaTime);
-
-    void ApplyRotation(float DeltaTime, float SteeringThrow);
-
-    FVector GetAirResistance();
-    FVector GetRollingResistance();
-
-    float Throttle = 0.0f;
     
-    float SteeringThrow = 0.0f;
+    void MoveForward(float Value);
+    
+    void MoveRight(float Value);
 
     UPROPERTY(ReplicatedUsing=OnRep_ServerState)
     FGoKartState ServerState;
@@ -109,7 +75,8 @@ private:
     UFUNCTION()
     void OnRep_ServerState();
 
-    FVector Velocity;
+    UFUNCTION(Server, Reliable, WithValidation)
+    void Server_SendMove(FGoKartMove Move);
 
     TArray<FGoKartMove> UnacknowledgedMoves;
 };

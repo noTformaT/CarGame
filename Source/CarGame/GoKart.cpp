@@ -89,35 +89,6 @@ void AGoKart::ClearUnacknowledgedMoves(FGoKartMove LastMove)
     UnacknowledgedMoves = NewMoves;
 }
 
-FGoKartMove AGoKart::CreateMove(float DeltaTime)
-{
-    FGoKartMove Move;
-    Move.DeltaTime = DeltaTime;
-    Move.SteeringThrow = SteeringThrow;
-    Move.Throttle = Throttle;
-    Move.Time = GetWorld()->TimeSeconds;
-
-    return Move;
-}
-
-void AGoKart::SimulateMove(const FGoKartMove& Move)
-{
-    FVector Force = GetActorForwardVector() * MaxDrivingForce * Move.Throttle;
-
-    Force += GetAirResistance();
-    Force += GetRollingResistance();
-
-    FVector Acceleration = Force / Mass;
-
-    Velocity = Velocity + Acceleration * Move.DeltaTime;
-
-    ApplyRotation(Move.DeltaTime, Move.SteeringThrow);
-
-    UpdateLocationFromVelocity(Move.DeltaTime);
-
-    //UE_LOG(LogTemp, Display, TEXT("Throttle: %f, Force (x: %f, y: %f, z: %f), "), Throttle, Force.X, Force.Y, Force.Z);
-}
-
 void AGoKart::ApplyRotation(float DeltaTime, float SteeringThr)
 {
     float DeltaLocation = FVector::DotProduct(GetActorForwardVector(), Velocity) * DeltaTime;
