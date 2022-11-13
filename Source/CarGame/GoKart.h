@@ -87,7 +87,7 @@ private:
 
     void ClearUnacknowledgedMoves(FGoKartMove LastMove);
     FGoKartMove CreateMove(float DeltaTime);
-    void SimulateMove(FGoKartMove Move);
+    void SimulateMove(const FGoKartMove& Move);
 
     void MoveForward(float Value);
     void MoveRight(float Value);

@@ -99,7 +99,7 @@ FGoKartMove AGoKart::CreateMove(float DeltaTime)
     return Move;
 }
 
-void AGoKart::SimulateMove(FGoKartMove Move)
+void AGoKart::SimulateMove(const FGoKartMove& Move)
 {
     FVector Force = GetActorForwardVector() * MaxDrivingForce * Move.Throttle;
 
@@ -189,6 +189,11 @@ void AGoKart::OnRep_ServerState()
     SetActorTransform(ServerState.Transform);
     Velocity = ServerState.Velocity;
     ClearUnacknowledgedMoves(ServerState.LastMove);
+
+    for (const FGoKartMove& Move : UnacknowledgedMoves)
+    {
+        SimulateMove(Move);
+    }
 }
 
 void AGoKart::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
