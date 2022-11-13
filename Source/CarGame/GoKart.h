@@ -84,20 +84,20 @@ private:
     UFUNCTION(Server, Reliable, WithValidation)
     void Server_SendMove(FGoKartMove Move);
 
+    void SimulateMove(FGoKartMove Move);
+
     void MoveForward(float Value);
     void MoveRight(float Value);
 
     void UpdateLocationFromVelocity(float DeltaTime);
 
-    void ApplyRotation(float DeltaTime);
+    void ApplyRotation(float DeltaTime, float SteeringThrow);
 
     FVector GetAirResistance();
     FVector GetRollingResistance();
 
-    UPROPERTY(Replicated)
     float Throttle = 0.0f;
     
-    UPROPERTY(Replicated)
     float SteeringThrow = 0.0f;
 
     UPROPERTY(ReplicatedUsing=OnRep_ServerState)
