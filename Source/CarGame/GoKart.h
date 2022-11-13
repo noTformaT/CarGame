@@ -12,16 +12,16 @@ struct FGoKartMove
     GENERATED_USTRUCT_BODY();
 
     UPROPERTY()
-    float Throttle = 0.0f;
+    float Throttle;
 
     UPROPERTY()
-    float SteeringThrow = 0.0f;
+    float SteeringThrow;
 
     UPROPERTY()
-    float DeltaTime = 0.0f;
+    float DeltaTime;
 
     UPROPERTY()
-    float Time = 0.0f;
+    float Time;
 };
 
 USTRUCT()
@@ -35,6 +35,7 @@ struct FGoKartState
     UPROPERTY()
     FVector Velocity;
 
+    UPROPERTY()
     FGoKartMove LastMove;
 
 
@@ -84,6 +85,8 @@ private:
     UFUNCTION(Server, Reliable, WithValidation)
     void Server_SendMove(FGoKartMove Move);
 
+    void ClearUnacknowledgedMoves(FGoKartMove LastMove);
+    FGoKartMove CreateMove(float DeltaTime);
     void SimulateMove(FGoKartMove Move);
 
     void MoveForward(float Value);
@@ -107,4 +110,6 @@ private:
     void OnRep_ServerState();
 
     FVector Velocity;
+
+    TArray<FGoKartMove> UnacknowledgedMoves;
 };

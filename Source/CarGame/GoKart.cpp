@@ -50,12 +50,14 @@ void AGoKart::Tick(float DeltaTime)
 
     if (IsLocallyControlled())
     {
-        FGoKartMove Move;
-        Move.DeltaTime = DeltaTime;
-        Move.SteeringThrow = SteeringThrow;
-        Move.Throttle = Throttle;
-
-        // DOTO: Set time
+        FGoKartMove Move = CreateMove(DeltaTime);
+        
+        if (!HasAuthority())
+        {
+            UnacknowledgedMoves.Add(Move);
+            UE_LOG(LogTemp, Display, TEXT("Queue length: %d"), UnacknowledgedMoves.Num());
+        }
+        
         Server_SendMove(Move);
         SimulateMove(Move);
     }
@@ -67,6 +69,34 @@ void AGoKart::Tick(float DeltaTime)
     
     
     DrawDebugString(GetWorld(), FVector(0, 0, 100), GetRoleEnumText(GetLocalRole()), this, FColor::White, DeltaTime);
+}
+
+void AGoKart::ClearUnacknowledgedMoves(FGoKartMove LastMove)
+{
+    UE_LOG(LogTemp, Display, TEXT("ClearUnacknowledgedMoves, LastTime: %f, Throttle:%f"), LastMove.Time, LastMove.Throttle);
+
+    TArray<FGoKartMove> NewMoves;
+    
+    for (const FGoKartMove& Move : UnacknowledgedMoves)
+    {
+        if (Move.Time > LastMove.Time)
+        {
+            NewMoves.Add(Move);
+        }
+    }
+
+    UnacknowledgedMoves = NewMoves;
+}
+
+FGoKartMove AGoKart::CreateMove(float DeltaTime)
+{
+    FGoKartMove Move;
+    Move.DeltaTime = DeltaTime;
+    Move.SteeringThrow = SteeringThrow;
+    Move.Throttle = Throttle;
+    Move.Time = GetWorld()->TimeSeconds;
+
+    return Move;
 }
 
 void AGoKart::SimulateMove(FGoKartMove Move)
@@ -84,7 +114,7 @@ void AGoKart::SimulateMove(FGoKartMove Move)
 
     UpdateLocationFromVelocity(Move.DeltaTime);
 
-    UE_LOG(LogTemp, Display, TEXT("Throttle: %f, Force (x: %f, y: %f, z: %f), "), Throttle, Force.X, Force.Y, Force.Z);
+    //UE_LOG(LogTemp, Display, TEXT("Throttle: %f, Force (x: %f, y: %f, z: %f), "), Throttle, Force.X, Force.Y, Force.Z);
 }
 
 void AGoKart::ApplyRotation(float DeltaTime, float SteeringThr)
@@ -155,8 +185,10 @@ void AGoKart::MoveRight(float Value)
 
 void AGoKart::OnRep_ServerState()
 {
+
     SetActorTransform(ServerState.Transform);
     Velocity = ServerState.Velocity;
+    ClearUnacknowledgedMoves(ServerState.LastMove);
 }
 
 void AGoKart::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
