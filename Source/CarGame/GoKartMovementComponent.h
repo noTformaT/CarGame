@@ -6,6 +6,24 @@
 #include "Components/ActorComponent.h"
 #include "GoKartMovementComponent.generated.h"
 
+USTRUCT()
+struct FGoKartMove
+{
+    GENERATED_USTRUCT_BODY();
+
+    UPROPERTY()
+    float Throttle;
+
+    UPROPERTY()
+    float SteeringThrow;
+
+    UPROPERTY()
+    float DeltaTime;
+
+    UPROPERTY()
+    float Time;
+};
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CARGAME_API UGoKartMovementComponent : public UActorComponent
@@ -24,10 +42,17 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-private:
-	void SimulateMove(const FGoKartMove& Move);
+    void SimulateMove(const FGoKartMove& Move);
 
-	FGoKartMove CreateMove(float DeltaTime);
+    FGoKartMove CreateMove(float DeltaTime);
+
+    FVector GetVelocity() { return Velocity; };
+    void SetVelocity(FVector Val) { Velocity = Val; };
+
+    void SetThrottle(float Val) { Throttle = Val; };
+    void SetSteeringThrow(float Val) { SteeringThrow = Val; };
+
+private:
 
 	void UpdateLocationFromVelocity(float DeltaTime);
 

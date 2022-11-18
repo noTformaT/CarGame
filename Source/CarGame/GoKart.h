@@ -4,25 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "GoKartMovementComponent.h"
 #include "GoKart.generated.h"
 
-USTRUCT()
-struct FGoKartMove
-{
-    GENERATED_USTRUCT_BODY();
 
-    UPROPERTY()
-    float Throttle;
-
-    UPROPERTY()
-    float SteeringThrow;
-
-    UPROPERTY()
-    float DeltaTime;
-
-    UPROPERTY()
-    float Time;
-};
 
 USTRUCT()
 struct FGoKartState
@@ -79,4 +64,7 @@ private:
     void Server_SendMove(FGoKartMove Move);
 
     TArray<FGoKartMove> UnacknowledgedMoves;
+
+    UPROPERTY(EditAnywhere)
+    UGoKartMovementComponent* MovementComponent;
 };

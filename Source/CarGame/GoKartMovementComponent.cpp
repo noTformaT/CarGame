@@ -63,25 +63,37 @@ FGoKartMove UGoKartMovementComponent::CreateMove(float DeltaTime)
 	return Move;
 }
 
-FVector AGoKart::GetAirResistance()
+FVector UGoKartMovementComponent::GetAirResistance()
 {
 	return -Velocity.GetSafeNormal() * Velocity.SizeSquared() * DragCoefficient;
 }
 
-FVector AGoKart::GetRollingResistance()
+FVector UGoKartMovementComponent::GetRollingResistance()
 {
 	float AccelerationDueToGravity = -GetWorld()->GetGravityZ() / 100.0f;
 	float NormalForce = Mass * AccelerationDueToGravity;
 	return -Velocity.GetSafeNormal() * RollingResistanceCoefficient * NormalForce;
 }
 
-void AGoKart::ApplyRotation(float DeltaTime, float SteeringThr)
+void UGoKartMovementComponent::ApplyRotation(float DeltaTime, float SteeringThr)
 {
-	float DeltaLocation = FVector::DotProduct(GetActorForwardVector(), Velocity) * DeltaTime;
+	float DeltaLocation = FVector::DotProduct(GetOwner()->GetActorForwardVector(), Velocity) * DeltaTime;
 	float RotationAngle = DeltaLocation / MinTurningRadius * SteeringThr;
-	FQuat RotationDelta(GetActorUpVector(), RotationAngle);
+	FQuat RotationDelta(GetOwner()->GetActorUpVector(), RotationAngle);
 
 	Velocity = RotationDelta.RotateVector(Velocity);
 
-	AddActorWorldRotation(RotationDelta);
+	GetOwner()->AddActorWorldRotation(RotationDelta);
+}
+
+void UGoKartMovementComponent::UpdateLocationFromVelocity(float DeltaTime)
+{
+	FVector Translation = Velocity * DeltaTime * 100;
+
+	FHitResult Hit;
+	GetOwner()->AddActorWorldOffset(Translation, true, &Hit);
+	if (Hit.IsValidBlockingHit())
+	{
+		Velocity = FVector::ZeroVector;
+	}
 }
