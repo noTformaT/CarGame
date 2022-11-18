@@ -100,17 +100,9 @@ void AGoKart::ApplyRotation(float DeltaTime, float SteeringThr)
     AddActorWorldRotation(RotationDelta);
 }
 
-FVector AGoKart::GetAirResistance()
-{
-    return - Velocity.GetSafeNormal() * Velocity.SizeSquared() * DragCoefficient;
-}
 
-FVector AGoKart::GetRollingResistance()
-{
-    float AccelerationDueToGravity = -GetWorld()->GetGravityZ() / 100.0f;
-    float NormalForce = Mass * AccelerationDueToGravity;
-    return -Velocity.GetSafeNormal() * RollingResistanceCoefficient * NormalForce;
-}
+
+
 
 void AGoKart::UpdateLocationFromVelocity(float DeltaTime)
 {

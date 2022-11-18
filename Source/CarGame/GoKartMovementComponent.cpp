@@ -63,3 +63,25 @@ FGoKartMove UGoKartMovementComponent::CreateMove(float DeltaTime)
 	return Move;
 }
 
+FVector AGoKart::GetAirResistance()
+{
+	return -Velocity.GetSafeNormal() * Velocity.SizeSquared() * DragCoefficient;
+}
+
+FVector AGoKart::GetRollingResistance()
+{
+	float AccelerationDueToGravity = -GetWorld()->GetGravityZ() / 100.0f;
+	float NormalForce = Mass * AccelerationDueToGravity;
+	return -Velocity.GetSafeNormal() * RollingResistanceCoefficient * NormalForce;
+}
+
+void AGoKart::ApplyRotation(float DeltaTime, float SteeringThr)
+{
+	float DeltaLocation = FVector::DotProduct(GetActorForwardVector(), Velocity) * DeltaTime;
+	float RotationAngle = DeltaLocation / MinTurningRadius * SteeringThr;
+	FQuat RotationDelta(GetActorUpVector(), RotationAngle);
+
+	Velocity = RotationDelta.RotateVector(Velocity);
+
+	AddActorWorldRotation(RotationDelta);
+}
