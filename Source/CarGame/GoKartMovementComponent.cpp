@@ -30,6 +30,11 @@ void UGoKartMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (GetOwner()->GetLocalRole() == ROLE_AutonomousProxy || GetOwner()->GetRemoteRole() == ROLE_SimulatedProxy)
+	{
+		LastMove = CreateMove(DeltaTime);
+		SimulateMove(LastMove);
+	}
 	// ...
 }
 
