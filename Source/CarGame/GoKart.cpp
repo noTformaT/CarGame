@@ -26,7 +26,7 @@ void AGoKart::BeginPlay()
 	
     if (HasAuthority())
     {
-        NetUpdateFrequency = 1;
+        //NetUpdateFrequency = 1;
     }
 }
 

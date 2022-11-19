@@ -69,6 +69,8 @@ private:
 
 	FTransform ClientStartTransform;
 
+	FVector ClientStartVelocity;
+
 	UPROPERTY()
 	UGoKartMovementComponent* MovementComponent = nullptr;
 };
